@@ -18,4 +18,7 @@ modules: [
 ````
 
 ## Credits
-Using request API by [CryptoCompare](https://www.cryptocompare.com/api/). 
+Using request API by [CryptoCompare](https://www.cryptocompare.com/api/).
+
+## Copyright
+Copyright (C) 2017 by Christian Handorf under [MIT](LICENSE.md)
