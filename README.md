@@ -17,6 +17,9 @@ modules: [
 ]
 ````
 
+## Screenshot
+![](preview.png?raw=true)
+
 ## Credits
 Using request API by [CryptoCompare](https://www.cryptocompare.com/api/).
 
