@@ -4,9 +4,21 @@ Module.register("MMM-cryptocoin", {
 
   result: {},
   defaults: {
-    coins: 'BTC',
     transCurrency: 'EUR',
-    updateInterval: 60000
+    updateInterval: 60000,
+    fadeSpeed: 3000,
+    coins: [
+        {
+          label: 'Ether',
+          coin: 'ETH',
+          output: '%x €',
+        },
+        {
+          label: 'Bitcoin',
+          coin: 'BTC',
+          output: '%x €',
+        },
+    ],
   },
 
   start: function() {
@@ -18,24 +30,34 @@ Module.register("MMM-cryptocoin", {
     var wrapper = document.createElement("ticker");
     wrapper.className = 'medium bright';
     var data = this.result;
-    var output = "";
+    var output = '<table width="95%">';
     for (var key in data) {
       if (data.hasOwnProperty(key)) {
-        if (output.length > 0) {output += "<br>";}
-        output += key + ": " + data[key][this.config.transCurrency] + " " + this.config.transCurrency;
+        for (var c in this.config.coins) {
+          var coinEntry = this.config.coins[c];          
+          if (coinEntry.coin == key) {
+            var str = '<tr><td width="50%">' + coinEntry.label + '</td><td align="right">' + coinEntry.output + '</td></tr>';
+            var val = data[key][this.config.transCurrency]; 
+            str = str.replace("%x", val.toFixed(2));
+            output += str;
+            break;
+          }
+        }
       }
     }
-    if (output) {
-      var outputElement =  document.createElement("span");
-      outputElement.innerHTML = output;
-      wrapper.appendChild(outputElement);
-    }
+    output += '</table>';
+    var outputElement =  document.createElement("span");
+    outputElement.innerHTML = output;
+    wrapper.appendChild(outputElement);
 
     return wrapper;
   },
 
   scheduleUpdate: function(delay) {
     var nextLoad = this.config.updateInterval;
+    if (nextLoad < 10000) {
+      nextLoad = 10000;
+    }
     if (typeof delay !== "undefined" && delay >= 0) {
       nextLoad = delay;
     }
@@ -47,11 +69,13 @@ Module.register("MMM-cryptocoin", {
   },
 
   getTickers: function () {
-    var coinArray = this.config.coins.split(",");
-    var coinAdd = "";
-    for (var i = 0; i < coinArray.length; i++) {
+    var coinAdd = ""; //"ETH,BTC";
+    
+    for (var c in this.config.coins) {
+      var coinEntry = this.config.coins[c];
+      if (coinEntry.coin.length < 1) {continue;}
       if (coinAdd.length > 0) {coinAdd += ",";}
-      coinAdd += coinArray[i].trim();
+      coinAdd += coinEntry.coin.trim();
     }
     var url = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' + coinAdd + '&tsyms=' + this.config.transCurrency;
     this.sendSocketNotification('GET_TICKERS', url);
@@ -59,6 +83,7 @@ Module.register("MMM-cryptocoin", {
 
   socketNotificationReceived: function(notification, payload) {
     if (notification === "TICKERS_RESULT") {
+      var self = this;
       this.result = payload;
       this.updateDom(self.config.fadeSpeed);
     }
