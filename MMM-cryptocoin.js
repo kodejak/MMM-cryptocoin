@@ -76,7 +76,7 @@ Module.register("MMM-cryptocoin", {
   },
 
   getTickers: function () {
-    var coinAdd = ""; //"ETH,BTC";
+    var coinAdd = "";
     
     for (var c in this.config.coins) {
       var coinEntry = this.config.coins[c];
