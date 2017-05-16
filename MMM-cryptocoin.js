@@ -1,4 +1,11 @@
-'use strict';
+/* Magic Mirror
+ * Module: MMM-cryptocoin
+ *
+ * By Christian Handorf (mmm@kodejak.de)
+ * MIT Licensed.
+ *
+ * Based on MMM-bitcoin module by valmassoi.
+ */
 
 Module.register("MMM-cryptocoin", {
 
